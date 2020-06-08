@@ -28,7 +28,9 @@ var generateAdvertisement = function (id) {
 
   // Создаем случайный массив из случайных элементов базового массива
   var getRandomArrFrom = function (baseArray) {
-    baseArray.sort(function () { return 0.5 - Math.random() });
+    baseArray.sort(function () {
+      return 0.5 - Math.random();
+    });
     return baseArray.slice(0, getRandomNumber(1, baseArray.length - 1));
   };
 
