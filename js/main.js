@@ -7,12 +7,12 @@ var advertisements = [];
 // Функция для создания и наполнения случайного объявления
 var generateAdvertisement = function (id) {
   //  Определяем переменные, которые будут использоваться при генерации объявлений
-  var aTypes = ['palace', 'flat', 'house', 'bungalo'];
-  var aCheckInOut = ['12:00', '13:00', '14:00'];
-  var aFeatures = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-  var aPhotos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-  var maxPrice = '10000';
-  var maxRooms = '5';
+  var housingTypes = ['palace', 'flat', 'house', 'bungalo'];
+  var timesOfCheckInOut = ['12:00', '13:00', '14:00'];
+  var featuresOfHousing = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+  var photosOfHousing = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+  var maxCostPerNight = '10000';
+  var maxRoomsOfHousing = '5';
   var maxGuests = '15';
 
   // Максимальная и минимальная координата для положения метки
@@ -22,47 +22,45 @@ var generateAdvertisement = function (id) {
   var maxY = 630;
 
   // Случайное число
-  var getRndByMax = function (min, max) {
+  var getRandomNumber = function (min, max) {
     return Math.floor(min + Math.random() * (max + 1 - min));
   };
 
   // Создаем случайный массив из случайных элементов базового массива
-  var getRandomArrFrom = function (baseArr) {
-    return Array.apply(null, Array(getRndByMax(1, baseArr.length))).map(function () {
-      return baseArr[getRndByMax(0, baseArr.length)];
-    });
+  var getRandomArrFrom = function (baseArray) {
+    baseArray.sort(function () { return 0.5 - Math.random() });
+    return baseArray.slice(0, getRandomNumber(1, baseArray.length - 1));
   };
 
   // Координаты пина на карте для заполнения данных адреса и поля location
-  var pinX = getRndByMax(minX, maxX);
-  var pinY = getRndByMax(minY, maxY);
+  var pinX = getRandomNumber(minX, maxX);
+  var pinY = getRandomNumber(minY, maxY);
 
   // Создаем объект для объявления
-  var newAdv = {
+  var newAdvertisement = {
     'author': {
       'avatar': 'img/avatars/user0' + id + '.png'
     },
     'offer': {
       'title': 'Заголовок объявления №' + id,
       'address': String(pinX + ', ' + pinY),
-      'price': getRndByMax(0, maxPrice),
-      'type': aTypes[getRndByMax(0, aTypes.length)],
-      'rooms': getRndByMax(0, maxRooms),
-      'guests': getRndByMax(0, maxGuests),
-      'checkin': aCheckInOut[getRndByMax(0, aCheckInOut.length)],
-      'checkout': aCheckInOut[getRndByMax(0, aCheckInOut.length)],
-      'features': getRandomArrFrom(aFeatures),
+      'price': getRandomNumber(0, maxCostPerNight),
+      'type': housingTypes[getRandomNumber(0, housingTypes.length)],
+      'rooms': getRandomNumber(0, maxRoomsOfHousing),
+      'guests': getRandomNumber(0, maxGuests),
+      'checkin': timesOfCheckInOut[getRandomNumber(0, timesOfCheckInOut.length)],
+      'checkout': timesOfCheckInOut[getRandomNumber(0, timesOfCheckInOut.length)],
+      'features': getRandomArrFrom(featuresOfHousing),
       'description': 'Описание объявления №' + id,
-      'photos': getRandomArrFrom(aPhotos)
+      'photos': getRandomArrFrom(photosOfHousing)
     },
     'location': {
       'x': pinX,
       'y': pinY
     }
   };
-
   // Добавляем полученный объект в массив объявлений
-  advertisements.push(newAdv);
+  advertisements.push(newAdvertisement);
 };
 
 
@@ -80,9 +78,9 @@ var fragment = document.createDocumentFragment();
 // Функция для создания одной метки на во фрагменте
 var createPinElements = function (pinData) {
   var template = document.querySelector('#pin').content;
-  var element = template.querySelector('.map__pin');
-  var pin = element.cloneNode(true);
-  var pinImg = pin.getElementsByTagName('img');
+  var pinElement = template.querySelector('.map__pin');
+  var pin = pinElement.cloneNode(true);
+  var pinInnerImg = pin.getElementsByTagName('img');
 
   // Установка координат для пина
   var actualPinX = pinData.location.x - pin.clientWidth / 2;
@@ -91,8 +89,8 @@ var createPinElements = function (pinData) {
   pin.style.left = actualPinX + 'px';
   pin.style.top = actualPinY + 'px';
 
-  pinImg[0].src = pinData.author.avatar;
-  pinImg[0].alt = pinData.offer.title;
+  pinInnerImg[0].src = pinData.author.avatar;
+  pinInnerImg[0].alt = pinData.offer.title;
 
   //  Добавление пина во фрагмент
   fragment.appendChild(pin);
