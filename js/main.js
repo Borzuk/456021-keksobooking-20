@@ -85,7 +85,7 @@ var createPinElements = function (pinData) {
     var element = template.querySelector('.map__pin');
     var pin = element.cloneNode(true);
     var pinImg = pin.getElementsByTagName('img');
-    
+
     // Установка координат для пина
     var actualPinX = pinData.location.x - pin.clientWidth / 2;
     var actualPinY = pinData.location.y - pin.clientHeight;
