@@ -207,6 +207,9 @@ var createPinCards = function (pinData) {
     }
   }
 
+  var pinCardInnerAvatar = pinCard.querySelector('.popup__avatar');
+  pinCardInnerAvatar.src = pinData.author.avatar;
+
   //  Добавление карты во фрагмент
   fragmentOfCards.appendChild(pinCard);
 };
