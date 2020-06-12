@@ -198,8 +198,8 @@ var setStateActive = function () {
       var pinInnerImg = pin.getElementsByTagName('img');
 
       // Установка координат для пина
-      var actualPinX = pinData.location.x - pin.clientWidth / 2;
-      var actualPinY = pinData.location.y - pin.clientHeight;
+      var actualPinX = Math.floor(pinData.location.x - pin.clientWidth / 2);
+      var actualPinY = Math.floor(pinData.location.y - pin.clientHeight);
 
       pin.style.left = actualPinX + 'px';
       pin.style.top = actualPinY + 'px';
@@ -283,6 +283,8 @@ var setStateUnactive = function () {
 
   var adFormSubmit = document.querySelector('.ad-form__submit');
   adFormSubmit.removeEventListener('click', onAdFormSubmit);
+
+  checkMapPinMainAddress();
 };
 
 // Определение положения главного пина
@@ -292,7 +294,7 @@ var checkMapPinMainAddress = function () {
   var mapPinMainActualY = Number.parseInt(mapPinMain.style.top, 10) + mapPinMain.clientHeight;
 
   var adFormInputField = document.querySelector('#address');
-  adFormInputField.value = mapPinMainActualX + ', ' + mapPinMainActualY;
+  adFormInputField.value = Math.floor(mapPinMainActualX) + ', ' + Math.floor(mapPinMainActualY);
 };
 
 // Функция для создания требуемого количества option в числе гостей
@@ -312,7 +314,7 @@ var createHousingCapacityElement = function (amount) {
     option.textContent = arrayOfValues[0];
     housingCapacity.appendChild(option);
   } else {
-    for (var iamount = amount; iamount >= 0; iamount--) {
+    for (var iamount = amount; iamount > 0; iamount--) {
       var anotherOption = document.createElement('option');
       var strForOption = arrayOfValues[iamount];
       anotherOption.value = iamount;
@@ -325,6 +327,11 @@ var createHousingCapacityElement = function (amount) {
 // Обработчик на главной метке
 var onMapPinMainMouseDown = function (evt) {
   if (evt.button === 0) {
+    setStateActive();
+  }
+};
+var onMapPinMainKeyDown = function (evt) {
+  if (evt.code === 'Enter') {
     setStateActive();
   }
 };
@@ -348,3 +355,4 @@ setStateUnactive();
 // Добавляем обработчик на главный пин
 var mapPinMain = document.querySelector('.map__pin--main');
 mapPinMain.addEventListener('mousedown', onMapPinMainMouseDown);
+mapPinMain.addEventListener('keydown', onMapPinMainKeyDown);
