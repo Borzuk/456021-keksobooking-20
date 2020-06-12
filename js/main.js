@@ -3,7 +3,6 @@
 // Пустой массив для объявлений
 var advertisements = [];
 
-//
 // Функция для создания и наполнения случайного объявления
 var generateAdvertisement = function (id) {
   //  Определяем переменные, которые будут использоваться при генерации объявлений
@@ -66,50 +65,7 @@ var generateAdvertisement = function (id) {
 };
 
 
-// Создаем случайные 8 объявлений.
-for (var i = 1; i <= 8; i++) {
-  generateAdvertisement(i);
-}
-
-// Объявляем переменную для карты
-var mapPinsOrigin = document.querySelector('.map__pins');
-
-// Объявляем переменную фрагмента документа
-var fragmentOfPins = document.createDocumentFragment();
-
-// Функция для создания одной метки на во фрагменте
-var createPinElements = function (pinData) {
-  var template = document.querySelector('#pin').content;
-  var pinElement = template.querySelector('.map__pin');
-  var pin = pinElement.cloneNode(true);
-  var pinInnerImg = pin.getElementsByTagName('img');
-
-  // Установка координат для пина
-  var actualPinX = pinData.location.x - pin.clientWidth / 2;
-  var actualPinY = pinData.location.y - pin.clientHeight;
-
-  pin.style.left = actualPinX + 'px';
-  pin.style.top = actualPinY + 'px';
-
-  pinInnerImg[0].src = pinData.author.avatar;
-  pinInnerImg[0].alt = pinData.offer.title;
-
-  //  Добавление пина во фрагмент
-  fragmentOfPins.appendChild(pin);
-};
-
-// Перебираем массив объявлений и наполняем фрагменты
-for (var j = 0; j < advertisements.length; j++) {
-  createPinElements(advertisements[j]);
-}
-
-// Добавление фрагмента в карту
-mapPinsOrigin.appendChild(fragmentOfPins);
-
-
-var map = document.querySelector('.map');
-map.classList.remove('map--faded');
-
+/*
 var fragmentOfCards = document.createDocumentFragment();
 
 // Функция для наполнения карточки по данным
@@ -220,3 +176,183 @@ createPinCards(advertisements[0]);
 var mapFiltersContainer = document.querySelector('.map__filters-container');
 // Вставка в самое начало родителя, то есть перед первым узлом
 map.insertBefore(fragmentOfCards, mapFiltersContainer);
+*/
+
+//  Активное состояние
+var setStateActive = function () {
+
+  // Функция, создающая 1 пин по входящим данным
+  var generateElementsFromArray = function (advdata) {
+
+    // Объявляем переменную для карты
+    var mapPinsOrigin = document.querySelector('.map__pins');
+
+    // Объявляем переменную фрагмента документа
+    var fragmentOfPins = document.createDocumentFragment();
+
+    // Функция для создания одной метки на во фрагменте
+    var createPinElements = function (pinData) {
+      var template = document.querySelector('#pin').content;
+      var pinElement = template.querySelector('.map__pin');
+      var pin = pinElement.cloneNode(true);
+      var pinInnerImg = pin.getElementsByTagName('img');
+
+      // Установка координат для пина
+      var actualPinX = Math.floor(pinData.location.x - pin.clientWidth / 2);
+      var actualPinY = Math.floor(pinData.location.y - pin.clientHeight);
+
+      pin.style.left = actualPinX + 'px';
+      pin.style.top = actualPinY + 'px';
+
+      pinInnerImg[0].src = pinData.author.avatar;
+      pinInnerImg[0].alt = pinData.offer.title;
+
+      //  Добавление пина во фрагмент
+      fragmentOfPins.appendChild(pin);
+    };
+
+    // Перебираем массив объявлений и наполняем фрагменты
+    for (var j = 0; j < advdata.length; j++) {
+      createPinElements(advdata[j]);
+    }
+
+    // Добавление фрагмента в карту
+    mapPinsOrigin.appendChild(fragmentOfPins);
+  };
+
+  var map = document.querySelector('.map');
+  map.classList.remove('map--faded');
+
+  var adForm = document.querySelector('.ad-form');
+  adForm.classList.remove('ad-form--disabled');
+
+  var adFormFieldset = adForm.querySelectorAll('fieldset');
+  for (var i = 0; i < adFormFieldset.length; i++) {
+    // adFormFieldset[i].disabled = 'false';  - почему-то в таком виде не отрабатывает.
+    adFormFieldset[i].removeAttribute('disabled');
+  }
+
+  // Создаем случайные 8 объявлений. В дальнейшей просто заменю на реальные объявы с сервера.
+  for (i = 1; i <= 8; i++) {
+    generateAdvertisement(i);
+  }
+
+  generateElementsFromArray(advertisements);
+  checkMapPinMainAddress();
+
+  clearHousingCapacity();
+  createHousingCapacityElement(document.querySelector('#room_number').value);
+
+  var housingRoomNumber = document.querySelector('#room_number');
+  housingRoomNumber.addEventListener('change', onHousingRoomNumberChange);
+
+  var adFormSubmit = document.querySelector('.ad-form__submit');
+  adFormSubmit.addEventListener('click', onAdFormSubmit);
+
+};
+
+// Неактивное состояние
+var setStateUnactive = function () {
+
+  var map = document.querySelector('.map');
+  map.classList.add('map--faded');
+
+  var adForm = document.querySelector('.ad-form');
+  adForm.classList.add('ad-form--disabled');
+
+  var adFormFieldset = adForm.querySelectorAll('fieldset');
+  for (var i = 0; i < adFormFieldset.length; i++) {
+    adFormFieldset[i].disabled = 'true';
+  }
+
+  // Удаляем все пины и сбрасываем демо-массив
+  advertisements = [];
+  var mapPins = document.querySelectorAll('.map__pin');
+  for (var iMapPins = 0; iMapPins < mapPins.length; iMapPins++) {
+    if (!mapPins[iMapPins].classList.contains('map__pin--main')) {
+      mapPins[iMapPins].remove();
+    }
+  }
+
+
+  // Сбрасываем форму
+  document.querySelector('form').reset();
+
+  var housingRoomNumber = document.querySelector('#room_number');
+  housingRoomNumber.removeEventListener('change', onHousingRoomNumberChange);
+
+  var adFormSubmit = document.querySelector('.ad-form__submit');
+  adFormSubmit.removeEventListener('click', onAdFormSubmit);
+
+  checkMapPinMainAddress();
+};
+
+// Определение положения главного пина
+var checkMapPinMainAddress = function () {
+  var mapPinMain = document.querySelector('.map__pin--main');
+  var mapPinMainActualX = Number.parseInt(mapPinMain.style.left, 10) + mapPinMain.clientWidth / 2;
+  var mapPinMainActualY = Number.parseInt(mapPinMain.style.top, 10) + mapPinMain.clientHeight;
+
+  var adFormInputField = document.querySelector('#address');
+  adFormInputField.value = Math.floor(mapPinMainActualX) + ', ' + Math.floor(mapPinMainActualY);
+};
+
+// Функция для создания требуемого количества option в числе гостей
+var clearHousingCapacity = function () {
+  var housingCapacity = document.querySelector('#capacity');
+  var options = housingCapacity.querySelectorAll('option');
+  for (var i = 0; i < options.length; i++) {
+    options[i].remove();
+  }
+};
+var createHousingCapacityElement = function (amount) {
+  var arrayOfValues = ['Не для гостей', 'для 1 гостя', 'для 2 гостей', 'для 3 гостей'];
+  var housingCapacity = document.querySelector('#capacity');
+  if (amount === '100') {
+    var option = document.createElement('option');
+    option.value = 0;
+    option.textContent = arrayOfValues[0];
+    housingCapacity.appendChild(option);
+  } else {
+    for (var iamount = amount; iamount > 0; iamount--) {
+      var anotherOption = document.createElement('option');
+      var strForOption = arrayOfValues[iamount];
+      anotherOption.value = iamount;
+      anotherOption.textContent = strForOption;
+      housingCapacity.appendChild(anotherOption);
+    }
+  }
+};
+
+// Обработчик на главной метке
+var onMapPinMainMouseDown = function (evt) {
+  if (evt.button === 0) {
+    setStateActive();
+  }
+};
+var onMapPinMainKeyDown = function (evt) {
+  if (evt.code === 'Enter') {
+    setStateActive();
+  }
+};
+
+// Обработчик изменения полей формы при смене количества комнат
+var onHousingRoomNumberChange = function (evt) {
+  clearHousingCapacity();
+  createHousingCapacityElement(evt.target.value);
+};
+
+// Обработчик отправки формы
+var onAdFormSubmit = function (evt) {
+  evt.preventDefault();
+  // Пока что просто уберу в неактивное состояние форму
+  setStateUnactive();
+};
+
+//  Установка неактивного состояния по-умолчанию
+setStateUnactive();
+
+// Добавляем обработчик на главный пин
+var mapPinMain = document.querySelector('.map__pin--main');
+mapPinMain.addEventListener('mousedown', onMapPinMainMouseDown);
+mapPinMain.addEventListener('keydown', onMapPinMainKeyDown);
