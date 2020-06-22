@@ -2,21 +2,10 @@
 
 //  Активное состояние
 var setStateActive = function () {
-  var loadUrl = 'https://javascript.pages.academy/keksobooking/data';
-  var onSuccessLoad = function (data) {
-    for (var i = 0; i < data.length; i++) {
-      window.data.setAdvertisementsData(data[i]);
-    }
-    window.map.removeMapFaded();
-    window.map.fillMapWithPins(window.data.advertisements);
-    window.form.activateForm();
-    window.pin.checkMapPinMainAddress();
-  };
-  var onErrorLoad = function () {
-    setStateUnactive();
-  };
-
-  window.ajax.load(loadUrl, onSuccessLoad, onErrorLoad);
+  window.map.removeMapFaded();
+  window.map.fillMapWithPins(window.data.advertisements);
+  window.form.activateForm();
+  window.pin.checkMapPinMainAddress();
 };
 
 // Неактивное состояние
@@ -27,6 +16,22 @@ var setStateUnactive = function () {
   window.pin.checkMapPinMainAddress();
 };
 
+// Получение данных с сервера
+var getDataFromServer = function () {
+  var loadUrl = 'https://javascript.pages.academy/keksobooking/data';
+  var onSuccessLoad = function (data) {
+    for (var i = 0; i < data.length; i++) {
+      window.data.setAdvertisementsData(data[i]);
+    }
+    setStateActive();
+  };
+  var onErrorLoad = function () {
+    setStateUnactive();
+  };
+
+  window.ajax.load(loadUrl, onSuccessLoad, onErrorLoad);
+};
+
 //  Установка неактивного состояния по-умолчанию
 setStateUnactive();
 
@@ -34,7 +39,7 @@ setStateUnactive();
 var onMapPinMainMouseDown = function (evt) {
   evt.preventDefault();
   if (evt.button === 0) {
-    setStateActive();
+    getDataFromServer();
   }
 
   var startCoords = {
