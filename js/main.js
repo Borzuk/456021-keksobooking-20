@@ -2,10 +2,21 @@
 
 //  Активное состояние
 var setStateActive = function () {
-  window.map.removeMapFaded();
-  window.map.fillMapWithPins(window.data.advertisements);
-  window.form.activateForm();
-  window.pin.checkMapPinMainAddress();
+  var loadUrl = 'https://javascript.pages.academy/keksobooking/data';
+  var onSuccessLoad = function (data) {
+    for (var i = 0; i < data.length; i++) {
+      window.data.setAdvertisementsData(data[i]);
+    }
+    window.map.removeMapFaded();
+    window.map.fillMapWithPins(window.data.advertisements);
+    window.form.activateForm();
+    window.pin.checkMapPinMainAddress();
+  };
+  var onErrorLoad = function () {
+    setStateUnactive();
+  };
+
+  window.ajax.load(loadUrl, onSuccessLoad, onErrorLoad);
 };
 
 // Неактивное состояние

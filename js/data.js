@@ -21,16 +21,9 @@
   var MIN_Y = 130;
   var MAX_Y = 630;
 
-  var loadUrl = 'https://javascript.pages.academy/keksobooking/data';
-  var onSuccessLoad = function (data) {
-    for (var i = 0; i < data.length; i++) {
-      advertisements.push(data[i]);
-    }
+  var setAdvertisementsData = function (data) {
+    advertisements.push(data);
   };
-  var onErrorLoad = function () {
-  };
-
-  window.ajax.load(loadUrl, onSuccessLoad, onErrorLoad);
 
   window.data = {
     // Константы
@@ -41,5 +34,6 @@
 
     // Массив данных
     advertisements: advertisements,
+    setAdvertisementsData: setAdvertisementsData,
   };
 })();
