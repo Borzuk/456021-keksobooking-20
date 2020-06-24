@@ -25,7 +25,7 @@
       limit = window.data.LIMIT_ADVERTISEMENT;
     }
     for (var j = 0; j < limit; j++) {
-      var pin = window.pin.createPinElements(advdata, j, mapPinsOrigin);;
+      var pin = window.pin.createPinElements(advdata, j, mapPinsOrigin);
       pin.addEventListener('click', openCard);
       pin.addEventListener('keydown', openCard);
     }
