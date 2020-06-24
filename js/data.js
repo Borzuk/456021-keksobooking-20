@@ -21,9 +21,12 @@
   var MIN_Y = 130;
   var MAX_Y = 630;
 
+  var LIMIT_ADVERTISEMENT = 5;
+
   var setAdvertisementsData = function (data) {
     advertisements.push(data);
   };
+
 
   window.data = {
     // Константы
@@ -31,6 +34,7 @@
     MAX_X: MAX_X,
     MIN_Y: MIN_Y,
     MAX_Y: MAX_Y,
+    LIMIT_ADVERTISEMENT: LIMIT_ADVERTISEMENT,
 
     // Массив данных
     advertisements: advertisements,

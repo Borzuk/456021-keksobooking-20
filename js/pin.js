@@ -6,8 +6,8 @@
   };
 
   // Создадим одну метку по полученнм данным
-  var createPinElements = function (pinId, parent) {
-    var pinData = window.data.advertisements[pinId];
+  var createPinElements = function (data, pinId, parent) {
+    var pinData = data[pinId];
     var template = document.querySelector('#pin').content;
     var pinElement = template.querySelector('.map__pin');
     var pin = pinElement.cloneNode(true);

@@ -7,17 +7,25 @@
   // Удаление класса неактивности с карты
   var removeMapFaded = function () {
     map.classList.remove('map--faded');
+    window.filter.setMapFilterHandler();
   };
 
   // Удаление класса неактивности с карты
   var setMapFaded = function () {
     map.classList.add('map--faded');
+    window.filter.removeMapFilterHandler();
   };
 
   // Заполнение карты пинами по входящим данным
   var fillMapWithPins = function (advdata) {
-    for (var j = 0; j < advdata.length; j++) {
-      var pin = window.pin.createPinElements(j, mapPinsOrigin);
+    var limit;
+    if (advdata.length <= window.data.LIMIT_ADVERTISEMENT) {
+      limit = advdata.length;
+    } else {
+      limit = window.data.LIMIT_ADVERTISEMENT;
+    }
+    for (var j = 0; j < limit; j++) {
+      var pin = window.pin.createPinElements(advdata, j, mapPinsOrigin);;
       pin.addEventListener('click', openCard);
       pin.addEventListener('keydown', openCard);
     }
@@ -27,7 +35,7 @@
   var openCard = function (evt) {
     if (evt.button === 0 || evt.code === 'Enter') {
       var pinId = evt.currentTarget.dataset.id;
-      var pinData = window.data.advertisements[pinId];
+      var pinData = window.advertisementsByType[pinId];
 
       // Удалим карту если уже есть.
       window.card.removeCardsPopup();
