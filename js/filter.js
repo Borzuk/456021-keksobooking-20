@@ -10,6 +10,8 @@ var advertisementsByType = window.data.advertisements;
         advertisementsByType = window.data.advertisements.filter(function (advertisement) {
           return advertisement.offer.type === evt.target.value;
         });
+      } else {
+        advertisementsByType = window.data.advertisements;
       }
     }
 
