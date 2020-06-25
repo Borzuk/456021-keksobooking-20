@@ -20,17 +20,13 @@ var advertisementsByType = window.data.advertisements;
   };
 
   var setMapFilterHandler = function () {
-    var mapFilters = document.querySelectorAll('.map__filter');
-    for (var i = 0; i < mapFilters.length; i++) {
-      mapFilters[i].addEventListener('change', checkDataByParams);
-    }
+    var mapFiltersContainer = document.querySelector('.map__filters-container');
+    mapFiltersContainer.addEventListener('change', checkDataByParams);
   };
 
   var removeMapFilterHandler = function () {
-    var mapFilters = document.querySelectorAll('.map__filter');
-    for (var i = 0; i < mapFilters.length; i++) {
-      mapFilters[i].removeEventListener('change', checkDataByParams);
-    }
+    var mapFiltersContainer = document.querySelector('.map__filters-container');
+    mapFiltersContainer.removeEventListener('change', checkDataByParams);
   };
 
   window.filter = {
